@@ -107,7 +107,8 @@ class Field(object):
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
-        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+        self.label = Label(self, label if label is not None else self.gettext(
+            _name.replace('_', ' ').title()))
 
         if widget is not None:
             self.widget = widget
@@ -379,8 +380,8 @@ class Label(object):
     """
     An HTML form label.
     """
-    def __init__(self, field_id, text):
-        self.field_id = field_id
+    def __init__(self, field, text):
+        self.field = field
         self.text = text
 
     def __str__(self):
@@ -396,7 +397,11 @@ class Label(object):
         if 'for_' in kwargs:
             kwargs['for'] = kwargs.pop('for_')
         else:
-            kwargs.setdefault('for', self.field_id)
+            kwargs.setdefault('for', self.field.id)
+        kwargs['class'] = 'label'
+        errors = self.field.errors
+        if errors:
+            kwargs['data-error'] = errors[0]
 
         attributes = widgets.html_params(**kwargs)
         return widgets.HTMLString('<label %s>%s</label>' % (attributes, text or self.text))

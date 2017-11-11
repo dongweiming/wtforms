@@ -177,6 +177,8 @@ class Input(object):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         kwargs.setdefault('type', self.input_type)
+        if 'class' not in kwargs:
+            kwargs['class'] = 'input'
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
         return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
@@ -227,6 +229,7 @@ class CheckboxInput(Input):
     def __call__(self, field, **kwargs):
         if getattr(field, 'checked', field.data):
             kwargs['checked'] = True
+        kwargs['class'] = 'is-checkbox has-background-color'
         return super(CheckboxInput, self).__call__(field, **kwargs)
 
 
